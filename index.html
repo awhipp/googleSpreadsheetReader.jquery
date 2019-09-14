@@ -1,74 +1,112 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script type="text/javascript">
-  var spData = null;
-  function doData(json) {
-      spData = json.feed.entry;
-  }
+ <head>
+   <meta charset="UTF-8">
+   <title>Google Spreadsheet Reader jQuery Documentation</title>
+   <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+   <script src="gsr.jquery.js"></script>
+   <!-- Global site tag (gtag.js) - Google Analytics -->
+   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-53648946-13"></script>
+   <script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
 
-  function drawCell(tr, val) {
-      var td = $("<td/>");
-      tr.append(td);
-      td.append(val);
-      return td;
-  }
-  function drawRow(table, rowData) {
-	  if (rowData == null) return null;
-	  if (rowData.length == 0) return null;
-	  var tr = $("<tr/>");
-	  table.append(tr);
-	  for(var c=0; c<rowData.length; c++) {
-		  drawCell(tr, rowData[c]);
-	  }
-	  return tr;
-  }
+   gtag('config', 'UA-53648946-13');
+   </script>
 
-  function drawTable(parent) {
-	  var table = $("<table/>");
-	  parent.append(table);
-	  return table;
-  }
+ </head>
+ <body style="padding: 1em">
+  <h1> Google Spreadsheet Reader jQuery Plugin </h1>
 
-  function readData(parent) {
-      var data = spData;
-      var table = drawTable(parent);
-      var rowData = [];
+  <p> A jQuery plugin that allows you to convert a google spreadsheet into an array of JSON objects. </p>
 
-      for(var r=0; r<data.length; r++) {
-          var cell = data[r]["gs$cell"];
-          var val = cell["$t"];
-          if (cell.col == 1) {
-              drawRow(table, rowData);
-              rowData = [];
-          }
-          rowData.push(val);
-      }
-      drawRow(table, rowData);
-  }
-  $(document).ready(function(){
-      readData($("#data"));
-  });
-  </script>
-<script src="https://spreadsheets.google.com/feeds/cells/1ALnxCoQvPg3ycaj1CjnugPNjIJrvZWLHBkihsJeD7Hk/1/public/values?alt=json-in-script&callback=doData"></script>
-<style type="text/css">
-  table {border-collapse: collapse; width: 100%;}
-  th, td {border: thin solid black; padding: 3px;}
-  tr.head th, tr.head td {background-color: #EDEDED; border-bottom: 4px double black;}
-  span.linetitle {font-weight: bold;}
-  div.lineclass {font-style: italic;}
-  .title, .result {width: 80%;}
-  .notes {width: 15%;}
-  h1 {text-align: center;}
-  body {margin: 12px; font-size: 12px;}
+  <hr>
+
+  <div class="gettingStarted">
+    <h3> Getting Started </h3>
+    <div>
+      <ol>
+        <li> You can download the full javascript file <a href="gsr.jquery.js" target="_blank">here</a></li>
+        <li> You can reference the latest jquery file on this website by using the following script tag:<br>
+          <code>
+            &lt;script src="https://gsr.netlify.com/gsr.jquery.js"&gt;&lt;/script&gt;
+          </code>
+        </li>
+        <li>
+          Requires jQuery proper (2.0+) to operate
+        </li>
+      </ol>
+    </div>
+
+    <hr>
+  </div>
+
+  <div class="example">
+    <h3> Example </h3>
+    <p> Given this <a href="https://docs.google.com/spreadsheets/d/13Ouk8KlnEn954LSSxscQEnmqOkM9R3A4Iy2pof_RdJQ/edit?usp=sharing" target="_blank">Google Spreadsheet</a>, we want to create a table. With this jQuery plugin it can be achieved in a few easy steps.</p>
+    <ol>
+        <li> Set the spreadsheet to be publically viewable via the share feature in Google Spreadsheets </li>
+        <li> Copy the spreadsheet document ID which you can find in the link URL. In the above spreadsheet the id is <b>13Ouk8KlnEn954LSSxscQEnmqOkM9R3A4Iy2pof_RdJQ</b> </li>
+        <li> Add the GSR plugin script to your page. </li>
+        <li> Define a call back function which will handle the results of the spreadsheet. </li>
+        <li> Execute: <code>$.gsr(documentID, callback);</code> which passes the document ID and the callback function.</li>
+    </ol>
+
+    <h4> Callback Data Definition </h4>
+    <div>
+
+        <p>
+            The function returns a JSON object with two keys: <strong>knownHeaders</strong> and <strong>table</strong>. 
+            <ul>
+                <li>
+                    The known headers are any header object in the first row.
+                </li> 
+                <li>
+                    The table definition is an array of row objects.
+                </li>
+            </ul>
+        </p>
+        <code>
+            {<br>
+                &emsp;knownHeaders: ["first name", "last name", "gender", "age"],<br>
+                &emsp;table: [<br>
+                &emsp;&emsp;{first name: "john", last name: "smith", gender: "male", age: "23"},<br>
+                &emsp;&emsp;{first name: "jane", last name: "smith", gender: "female", age: "24"},<br>
+                &emsp;&emsp;{first name: "pete", last name: "strong"},<br>
+                &emsp;&emsp;{first name: "johnny", last name: "appleseed", age: "19"}<br>
+            }<br>
+        </code>
+
+        <h4> Putting it all together </h4>
+
+        <p> Now that we understand the general concept we can create the following table based on the above <a href="https://docs.google.com/spreadsheets/d/13Ouk8KlnEn954LSSxscQEnmqOkM9R3A4Iy2pof_RdJQ/edit?usp=sharing" target="_blank">spreadsheet</a>: </p>
+
+        <table></table>
+
+        <p> All that is needed is less than 50 lines of code: </p>
+        <script src="https://gist.github.com/awhipp/12ccfa7a123ec339eaa5959b85e41639.js"></script>
+    </div>
+    <p>
+
+    </p>
+    <hr>
+  </div>
+
+ </body>
+ <script src="exampleSetup.js"></script>
+ <style>
+    table, td, th {  
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 15px;
+    }
 </style>
-<style type="text/css" media="print">
-  form {display: none;}
-</style>
-</head>
-<body>
-<h1>Parse Google Spreadsheet with JavaScript</h1>
-<div id="data"/>
-</body>
 </html>
