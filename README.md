@@ -1,3 +1,6 @@
+# DEPRECATED
+Google API v1 is no longer supportive of a non-API key based approach
+
 # Google Spreadsheet Reader jQuery Plugin
 A jQuery plugin that allows you to convert a google spreadsheet into an array of JSON objects.
 
